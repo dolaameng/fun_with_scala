@@ -162,6 +162,11 @@ object WorkingWithLists {
 	        } yield c :: restC
 	    }
 	}
+	def lsort[T](xs: List[List[T]]) : List[List[T]] =
+	  xs sortBy (_.length)
+	  
+	def lsortFreq[T](xs: List[List[T]]) : List[List[T]] = 
+	  (xs groupBy (_.length)).toList sortBy (_._2.length) flatMap (_._2)
 	
 	// entrance to tests
 	def main(args: Array[String]) {
@@ -283,6 +288,25 @@ object WorkingWithLists {
         // of group sizes and the predicate will return a list of group
         val allGroups = group(List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"))(List(2, 3, 4)).toList
         assert (allGroups3.toSet == allGroups.toSet)
+        // P28 sorting a list of lists according to length of sublists
+        // Sort the sublists of lists according to their lengths. shorter -> longer
+        // the orders should be kept for sublists of the same length
+        assert (lsort(List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), 
+                          List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o)))
+                == List(List('o), List('d, 'e), List('d, 'e), List('m, 'n), 
+                  List('a, 'b, 'c), List('f, 'g, 'h), List('i, 'j, 'k, 'l)))
+        // sort the sublists according to their length frequency
+        // Note that in the following example, 
+        // the first two lists in the result have length 4 and 1 and both lengths appear just once. 
+        // The third and fourth lists have length 3 and there are two list of this length. 
+        // Finally, the last three lists have length 2. 
+        // The order should be preserved at the same length frequencies
+        assert (lsortFreq(List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), 
+                              List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), 
+                              List('o))) 
+          == List(List('i, 'j, 'k, 'l), List('o), List('a, 'b, 'c), 
+                  List('f, 'g, 'h), List('d, 'e), List('d, 'e), List('m, 'n)))
+        
 
 		println("all tests passed...")
 	}
